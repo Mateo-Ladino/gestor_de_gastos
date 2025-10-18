@@ -2,9 +2,23 @@ import Swal from "sweetalert2";
 import { supabase, ObtenerIdAuthSupabase } from "../index";
 export const InsertarUsuarios = async (p) => {
   try {
-    const { data } = await supabase.from("usuarios").insert(p).select();
+    const { data, error } = await supabase.from("usuarios").insert(p).select();
+    
+    if (error) {
+      // Si es error de clave duplicada, no mostrar error
+      if (error.code === '23505') {
+        console.log('Usuario ya existe, continuando...');
+        return null;
+      }
+      console.error('Error al insertar usuario:', error);
+      return null;
+    }
+    
     return data;
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error en InsertarUsuarios:', error);
+    return null;
+  }
 };
 export const MostrarUsuarios = async () => {
   try {

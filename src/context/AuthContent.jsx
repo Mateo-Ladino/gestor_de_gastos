@@ -21,13 +21,30 @@ export const AuthContextProvider = ({ children }) => {
     };
   }, []);
   const insertarUsuarios = async (dataProvider, idAuthSupabase) => {
-    const p = {
-      nombres: dataProvider.name,
-      foto: dataProvider.picture,
-      idauth_supabase: idAuthSupabase,
-    };
-    await InsertarUsuarios(p)
-
+    try {
+      // Usar upsert para manejar usuarios existentes
+      const p = {
+        nombres: dataProvider.name,
+        foto: dataProvider.picture,
+        idauth_supabase: idAuthSupabase,
+      };
+      
+      const { data, error } = await supabase
+        .from('usuarios')
+        .upsert(p, { 
+          onConflict: 'idauth_supabase',
+          ignoreDuplicates: false 
+        })
+        .select();
+      
+      if (error) {
+        console.error('Error al manejar usuario:', error);
+      } else {
+        console.log('Usuario procesado correctamente:', data);
+      }
+    } catch (error) {
+      console.error('Error en insertarUsuarios:', error);
+    }
   };
   return (
     <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>

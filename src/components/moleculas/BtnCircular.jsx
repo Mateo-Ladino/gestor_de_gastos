@@ -8,6 +8,7 @@ export function BtnCircular({
   fontsize,
   translatex,
   translatey,
+  funcion,
 }) {
   return (
     <Container
@@ -18,6 +19,7 @@ export function BtnCircular({
       $fontsize={fontsize}
       $translatex={translatex}
       $translatey={translatey}
+      onClick={funcion}
     >
       <span>{icono}</span>
     </Container>
@@ -34,6 +36,12 @@ const Container = styled.div`
   position: absolute;
   transform: translateX(${(props) => props.$translatex})
     translateY(${(props) => props.$translatey});
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.8;
+  }
 
   span {
     font-size: ${(props) => props.$fontsize};

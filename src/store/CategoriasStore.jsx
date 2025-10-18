@@ -15,16 +15,16 @@ export const useCategoriasStore = create((set, get) => ({
   insertarCategorias: async (p) => {
     await InsertarCategorias(p);
     const { mostrarCategorias } = get();
-    set(mostrarCategorias(p));
+    await mostrarCategorias(p);
   },
   eliminarCategoria: async (p) => {
     await EliminarCategorias(p);
     const { mostrarCategorias } = get();
-    set(mostrarCategorias(p));
+    await mostrarCategorias(p);
   },
   editarCategoria: async (p) => {
     await EditarCategorias(p);
     const { mostrarCategorias } = get();
-    set(mostrarCategorias(p));
+    await mostrarCategorias(p);
   },
 }));

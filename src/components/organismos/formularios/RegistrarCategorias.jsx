@@ -36,13 +36,19 @@ export function RegistrarCategorias({ onClose, dataSelect, accion }) {
     handleSubmit,
   } = useForm();
   async function insertar(data) {
+    // Validar que todos los campos requeridos estén presentes
+    if (!data.descripcion || !datausuarios?.id || !tipo) {
+      alert("Error: Faltan datos requeridos para crear la categoría");
+      return;
+    }
+
     if (accion === "Editar") {
       const p = {
         descripcion: data.descripcion,
         color: currentColor,
         icono: emojiselect,
         id: dataSelect.id,
-        idusuario:datausuarios.id,
+        idusuario: datausuarios.id,
         tipo: tipo,
       };
       try {
@@ -50,7 +56,10 @@ export function RegistrarCategorias({ onClose, dataSelect, accion }) {
         await editarCategoria(p);
         setEstadoproceso(false);
         onClose();
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error al editar categoría:", error);
+        setEstadoproceso(false);
+      }
     } else {
       const p = {
         descripcion: data.descripcion,
@@ -63,10 +72,11 @@ export function RegistrarCategorias({ onClose, dataSelect, accion }) {
         setEstadoproceso(true);
         await insertarCategorias(p);
         setEstadoproceso(false);
-
         onClose();
       } catch (error) {
-        alert("error ingresar Form");
+        console.error("Error al insertar categoría:", error);
+        setEstadoproceso(false);
+        alert("Error al crear la categoría");
       }
     }
   }
@@ -100,9 +110,15 @@ export function RegistrarCategorias({ onClose, dataSelect, accion }) {
             <div>
               <InputText
                 defaultValue={dataSelect.descripcion}
-                register={register}
+                register={register("descripcion", {
+                  required: "La descripción es requerida",
+                  minLength: {
+                    value: 2,
+                    message: "Mínimo 2 caracteres",
+                  },
+                })}
                 placeholder="Descripcion"
-                errors={errors}
+                errors={errors.descripcion}
                 style={{ textTransform: "capitalize" }}
               />
             </div>
