@@ -254,3 +254,45 @@ export async function ObtenerResumenMovimientos(idusuario) {
     return { ingresos: 0, gastos: 0, balance: 0 };
   }
 }
+
+/**
+ * FUNCIÓN: ObtenerMovimientosInformes
+ *
+ * Recupera todos los movimientos del usuario sin filtrar por tipo. Se utiliza
+ * para construir reportes y métricas agregadas en el módulo de informes.
+ *
+ * @param {number} idusuario - ID del usuario propietario de los movimientos
+ * @returns {Array} Lista de movimientos con la información de su categoría
+ */
+export async function ObtenerMovimientosInformes(idusuario) {
+  try {
+    const { data, error } = await supabase
+      .from("movimientos")
+      .select(`
+        id,
+        descripcion,
+        monto,
+        fecha,
+        tipo,
+        categorias (
+          descripcion,
+          color,
+          icono,
+          tipo
+        )
+      `)
+      .eq("idusuario", idusuario)
+      .order("fecha", { ascending: false })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error al obtener movimientos para informes:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Error en ObtenerMovimientosInformes:", error);
+    return [];
+  }
+}

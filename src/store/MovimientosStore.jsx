@@ -22,6 +22,7 @@ import {
   InsertarMovimiento,
   MostrarMovimientos,
   ObtenerResumenMovimientos,
+  ObtenerMovimientosInformes,
 } from "../supabase/crudMovimientos";
 
 /**
@@ -57,6 +58,7 @@ export const useMovimientosStore = create((set, get) => ({
    * }
    */
   datamovimientos: [],
+  movimientosInformes: [],
   
   /**
    * OBJETO: resumen
@@ -258,5 +260,44 @@ export const useMovimientosStore = create((set, get) => ({
         balance: parseFloat(balance.toFixed(2)) 
       } 
     });
+  },
+
+  /**
+   * FUNCIÓN: cargarResumen
+   *
+   * Obtiene el resumen financiero directamente desde Supabase. Se utiliza en
+   * el módulo de informes para mostrar datos consolidados sin depender del
+   * estado local.
+   *
+   * @param {number} idusuario - ID del usuario para calcular el resumen
+   * @returns {Object} Resumen financiero actualizado
+   */
+  cargarResumen: async (idusuario) => {
+    if (!idusuario) {
+      return { ingresos: 0, gastos: 0, balance: 0 };
+    }
+
+    const resumen = await ObtenerResumenMovimientos(idusuario);
+    set({ resumen });
+    return resumen;
+  },
+
+  /**
+   * FUNCIÓN: cargarMovimientosInformes
+   *
+   * Obtiene todos los movimientos del usuario para construir los reportes del
+   * módulo de informes.
+   *
+   * @param {number} idusuario - ID del usuario
+   * @returns {Array} Lista de movimientos
+   */
+  cargarMovimientosInformes: async (idusuario) => {
+    if (!idusuario) {
+      return [];
+    }
+
+    const movimientos = await ObtenerMovimientosInformes(idusuario);
+    set({ movimientosInformes: movimientos });
+    return movimientos;
   },
 }));

@@ -22,7 +22,7 @@
  */
 
 import styled from "styled-components";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Swal from "sweetalert2";
 import { ContentAccionesTabla } from "./ContentAccionesTabla";
 import { Paginacion } from "./Paginacion";
@@ -47,6 +47,17 @@ export function TablaMovimientos({
   // Calcular el número máximo de páginas
   const mx = data.length / porPagina;
   const maximo = mx < 1 ? 1 : mx;
+
+  const currencyFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat("es-CO", {
+        style: "currency",
+        currency: "COP",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }),
+    []
+  );
 
   // ===== FUNCIONES =====
   
@@ -146,8 +157,8 @@ export function TablaMovimientos({
                 {/* ===== COLUMNA: MONTO ===== */}
                 <td data-title="Monto">
                   <span className={`monto ${movimiento.tipo === 'i' ? 'ingreso' : 'gasto'}`}>
-                    {/* Mostrar + para ingresos, - para gastos */}
-                    {movimiento.tipo === 'i' ? '+' : '-'}${parseFloat(movimiento.monto).toFixed(2)}
+                    {movimiento.tipo === 'i' ? '+' : '-'}{" "}
+                    {currencyFormatter.format(Number(movimiento.monto) || 0)}
                   </span>
                 </td>
                 
